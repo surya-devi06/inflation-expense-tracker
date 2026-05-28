@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinWise AI — Smart SIP Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --bg: #0a0f1e;
+            --surface: #111827;
+            --surface2: #1a2235;
+            --border: rgba(255, 255, 255, 0.06);
+            --accent: #f59e0b;
+            --accent2: #10b981;
+            --accent3: #3b82f6;
+            --danger: #ef4444;
+            --text: #f1f5f9;
+            --muted: #64748b;
+            --muted2: #94a3b8;
+            --gold: #fbbf24;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* Background grid */
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        /* Header */
+        
+        header {
+            padding: 32px 0 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: var(--accent);
+        }
+        
+        .tagline {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        /* Hero */
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+        
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(90deg, var(--accent), #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            color: var(--muted2);
+            font-size: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        /* Input grid */
+        
+        .inputs-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .inputs-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 24px;
+        }
+        
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .input-wrap {
+            position: relative;
+        }
+        
+        .input-prefix {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .input-suffix {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 13px;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 36px 12px 32px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s;
+            -moz-appearance: textfield;
+        }
+        
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        
+        input[type="number"]:focus {
+            border-color: var(--accent);
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        /* Results */
+        
+        #results {
+            display: none;
+        }
+        
+        #results.visible {
+            display: block;
+        }
+        /* Summary cards */
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .summary-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--card-color, var(--accent));
+        }
+        
+        .summary-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        
+        .summary-card .value {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--card-color, var(--accent));
+        }
+        
+        .summary-card .sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        /* Scenario section */
+        
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .section-sub {
+            font-size: 13px;
+            color: var(--muted2);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        /* Inflation tabs */
+        
+        .scenario-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 8px 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--muted2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .tab-btn.active {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        /* Comparison table */
+        
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead tr {
+            background: var(--surface2);
+        }
+        
+        th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+        }
+        
+        tbody tr {
+            transition: background 0.15s;
+        }
+        
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .inflation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .nominal-val {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text);
+        }
+        
+        .real-val {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+        }
+        
+        .beat-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .beat-yes {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        
+        .beat-no {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+        /* Visual bar */
+        
+        .bar-wrap {
+            margin-bottom: 32px;
+        }
+        
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        
+        .bar-label {
+            width: 70px;
+            font-size: 13px;
+            color: var(--muted2);
+            flex-shrink: 0;
+        }
+        
+        .bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--surface2);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #000;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+        
+        .bar-amount {
+            margin-left: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            width: 90px;
+            flex-shrink: 0;
+        }
+        /* Explanation cards */
+        
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .exp-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            border-left: 3px solid var(--card-color);
+        }
+        
+        .exp-card .emoji {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        
+        .exp-card .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .exp-card .body {
+            font-size: 13px;
+            color: var(--muted2);
+            line-height: 1.6;
+        }
+        /* Advice */
+        
+        .advice-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.06));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 32px;
+        }
+        
+        .advice-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent2);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .advice-list {
+            list-style: none;
+        }
+        
+        .advice-list li {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--muted2);
+        }
+        
+        .advice-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .advice-list .icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        
+        .advice-list strong {
+            color: var(--text);
+        }
+        /* AI Chat */
+        
+        .chat-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        
+        .chat-header {
+            padding: 16px 24px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ai-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .chat-header-text .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .chat-header-text .status {
+            font-size: 11px;
+            color: var(--accent2);
+        }
+        
+        .chat-body {
+            padding: 24px;
+            min-height: 120px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .msg-ai {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .msg-user {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            color: var(--text);
+        }
+        
+        .msg-ai .sender {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .typing {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 4px 0;
+        }
+        
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: var(--muted);
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
+        }
+        
+        .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes blink {
+            0%,
+            80%,
+            100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .chat-input-wrap {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+        
+        .chat-input::placeholder {
+            color: var(--muted);
+        }
+        
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            transition: transform 0.15s, opacity 0.2s;
+        }
+        
+        .chat-send:hover {
+            transform: scale(1.05);
+        }
+        
+        .chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* Motivation */
+        
+        .motivation {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .motivation .quote {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        
+        .motivation .disclaimer {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 24px 0;
+            font-size: 11px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+        }
+        /* Suggested questions */
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 0 24px;
+        }
+        
+        .suggestion-chip {
+            padding: 6px 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--muted2);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .suggestion-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(245, 158, 11, 0.05);
+        }
+        
+        @media (max-width: 600px) {
+            .inputs-card {
+                padding: 20px;
+            }
+            th,
+            td {
+                padding: 12px;
+                font-size: 12px;
+            }
+            .summary-card .value {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">💰</div>
+                <div>
+                    <div class="logo-text">Fin<span>Wise</span> AI</div>
+                    <div class="tagline">Your Smart Indian Investment Companion</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="hero">
+            <h1>Will Your SIP Beat <em>Inflation</em>?</h1>
+            <p>See your wealth across 5 inflation scenarios. Built for college students & young investors in India.</p>
+        </div>
+
+        <!-- Inputs -->
+        <div class="inputs-card">
+            <div class="inputs-title">📊 Your Investment Details</div>
+            <div class="inputs-grid">
+                <div class="input-group">
+                    <label>Monthly SIP</label>
+                    <div class="input-wrap">
+                        <span class="input-prefix">₹</span>
+                        <input type="number" id="sip" value="5000" min="100" step="500">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Expected Return</label>
+                    <div class="input-wrap">
+                        <input type="number" id="returns" value="12" min="1" max="30" step="0.5">
+                        <span class="input-suffix">% p.a.</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Duration</label>
+                    <div class="input-wrap">
+                        <input type="number" id="years" value="15" min="1" max="40" step="1">
+                        <span class="input-suffix">years</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Annual Step-up</label>
+                    <div class="input-wrap">
+                        <input type="number" id="stepup" value="10" min="0" max="50" step="1">
+                        <span class="input-suffix">% p.a.</span>
+                    </div>
+                </div>
+            </div>
+            <button class="calculate-btn" onclick="calculate()">⚡ Calculate My Wealth Journey</button>
+        </div>
+
+        <!-- Results -->
+        <div id="results">
+
+            <!-- Summary cards -->
+            <div class="summary-grid" id="summaryCards"></div>
+
+            <!-- Comparison table -->
+            <div class="section-title">🎯 Inflation Scenario Comparison</div>
+            <div class="section-sub" id="sectionSub"></div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Inflation Rate</th>
+                            <th>Nominal Value</th>
+                            <th>Real Value (Today's ₹)</th>
+                            <th>Total Invested</th>
+                            <th>Wealth Gained</th>
+                            <th>Beat Inflation?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Visual bars -->
+            <div class="section-title">📈 Real Wealth Comparison</div>
+            <div class="section-sub">How much your money is actually worth in today's purchasing power across scenarios</div>
+            <div class="bar-wrap" id="barChart"></div>
+
+            <!-- Explanation cards -->
+            <div class="section-title">💡 What Does This Mean for You?</div>
+            <div class="section-sub">Explained simply — no jargon, just real talk.</div>
+            <div class="explanation-grid" id="explanationCards"></div>
+
+            <!-- Practical Advice -->
+            <div class="advice-card">
+                <h3>✅ FinWise Practical Advice for You</h3>
+                <ul class="advice-list" id="adviceList"></ul>
+            </div>
+
+            <!-- AI Chat -->
+            <div class="chat-section">
+                <div class="chat-header">
+                    <div class="ai-avatar">🤖</div>
+                    <div class="chat-header-text">
+                        <div class="name">FinWise AI Advisor</div>
+                        <div class="status">● Online — Ask me anything</div>
+                    </div>
+                </div>
+                <div class="chat-body" id="chatBody">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="msg msg-ai">
+                            <div class="sender">FinWise AI</div>
+                            <span id="initialMsg"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="suggestions" id="suggestions"></div>
+                <div class="chat-input-wrap">
+                    <input class="chat-input" id="chatInput" type="text" placeholder="Ask: Will I become a crorepati? How to reach ₹1 Cr faster?..." onkeydown="if(event.key==='Enter') sendChat()">
+                    <button class="chat-send" id="chatSendBtn" onclick="sendChat()">➤</button>
+                </div>
+            </div>
+
+            <!-- Motivation -->
+            <div class="motivation">
+                <div class="quote" id="motivationQuote"></div>
+                <div class="disclaimer">⚠️ Disclaimer: Mutual fund investments are subject to market risks. Past returns do not guarantee future performance. This tool is for educational purposes only. Please consult a SEBI-registered financial advisor before investing. All
+                    return figures are estimates based on inputs provided.</div>
+            </div>
+
+        </div>
+
+        <footer>Made with ❤️ for Indian college students · FinWise AI · Not SEBI registered advice</footer>
+    </div>
+
+    <script>
+        const INFLATION_SCENARIOS = [{
+            rate: 3,
+            label: '3%',
+            emoji: '🟢',
+            color: '#10b981',
+            desc: 'Very Optimistic'
+        }, {
+            rate: 4,
+            label: '4%',
+            emoji: '🟡',
+            color: '#f59e0b',
+            desc: 'RBI Target ★'
+        }, {
+            rate: 5,
+            label: '5%',
+            emoji: '🟠',
+            color: '#f97316',
+            desc: 'Most Likely'
+        }, {
+            rate: 6,
+            label: '6%',
+            emoji: '🔴',
+            color: '#ef4444',
+            desc: 'High Inflation'
+        }, {
+            rate: 7,
+            label: '7%',
+            emoji: '🔴',
+            color: '#dc2626',
+            desc: 'Very High'
+        }, ];
+
+        let calcData = {};
+
+        function fmt(n) {
+            if (n >= 1e7) return '₹' + (n / 1e7).toFixed(2) + ' Cr';
+            if (n >= 1e5) return '₹' + (n / 1e5).toFixed(2) + ' L';
+            return '₹' + Math.round(n).toLocaleString('en-IN');
+        }
+
+        function fmtPlain(n) {
+            if (n >= 1e7) return (n / 1e7).toFixed(2) + ' Cr';
+            if (n >= 1e5) return (n / 1e5).toFixed(2) + ' L';
+            return Math.round(n).toLocaleString('en-IN');
+        }
+
+        function calculateSIP(sip, annualReturn, years, stepUp, inflationRate) {
+            let monthlySIP = sip;
+            let monthlyRate = annualReturn / 12 / 100;
+            let totalMonths = years * 12;
+            let futureValue = 0;
+            let totalInvested = 0;
+
+            for (let month = 1; month <= totalMonths; month++) {
+                futureValue = (futureValue + monthlySIP) * (1 + monthlyRate);
+                totalInvested += monthlySIP;
+                if (month % 12 === 0 && month < totalMonths) {
+                    monthlySIP = monthlySIP * (1 + stepUp / 100);
+                }
+            }
+
+            const realFV = futureValue / Math.pow(1 + inflationRate / 100, years);
+            const realInvested = totalInvested / Math.pow(1 + inflationRate / 100, years);
+            return {
+                nominalFV: futureValue,
+                realFV,
+                totalInvested,
+                realInvested
+            };
+        }
+
+        function calculate() {
+            const sip = +document.getElementById('sip').value;
+            const ret = +document.getElementById('returns').value;
+            const yrs = +document.getElementById('years').value;
+            const su = +document.getElementById('stepup').value;
+
+            calcData = {
+                sip,
+                ret,
+                yrs,
+                su
+            };
+
+            const results = INFLATION_SCENARIOS.map(s => ({
+                ...s,
+                ...calculateSIP(sip, ret, yrs, su, s.rate)
+            }));
+
+            // Store for AI context
+            calcData.results = results;
+
+            const rbi = results.find(r => r.rate === 4);
+            const likely = results.find(r => r.rate === 5);
+
+            // Summary cards
+            const summaryCards = document.getElementById('summaryCards');
+            const finalSIP = sip * Math.pow(1 + su / 100, yrs - 1);
+            summaryCards.innerHTML = `
+    <div class="summary-card" style="--card-color:#f59e0b">
+      <div class="label">Nominal Corpus (12%)</div>
+      <div class="value">${fmt(rbi.nominalFV)}</div>
+      <div class="sub">At ${yrs} years</div>
+    </div>
+    <div class="summary-card" style="--card-color:#10b981">
+      <div class="label">Real Value @ 4% Inflation</div>
+      <div class="value">${fmt(rbi.realFV)}</div>
+      <div class="sub">Today's purchasing power</div>
+    </div>
+    <div class="summary-card" style="--card-color:#3b82f6">
+      <div class="label">Total Invested</div>
+      <div class="value">${fmt(rbi.totalInvested)}</div>
+      <div class="sub">With ${su}% annual step-up</div>
+    </div>
+    <div class="summary-card" style="--card-color:#a855f7">
+      <div class="label">Final Monthly SIP</div>
+      <div class="value">${fmt(finalSIP)}</div>
+      <div class="sub">In year ${yrs}</div>
+    </div>
+  `;
+
+            // Section subtitle
+            document.getElementById('sectionSub').textContent =
+                `You're investing ₹${sip.toLocaleString('en-IN')}/month growing at ${su}% per year for ${yrs} years at ${ret}% expected return. Here's how inflation changes your actual wealth:`;
+
+            // Table
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = results.map(r => {
+                const wealthGain = r.nominalFV - r.totalInvested;
+                const realReturn = ((r.realFV / r.totalInvested) - 1) * 100;
+                const beats = realReturn > 0;
+                return `<tr>
+      <td>
+        <div class="inflation-badge" style="background:${r.color}18; color:${r.color}">
+          <div class="badge-dot" style="background:${r.color}"></div>
+          ${r.label} — ${r.desc}
+        </div>
+      </td>
+      <td><div class="nominal-val">${fmt(r.nominalFV)}</div></td>
+      <td><div class="real-val" style="color:${r.color}">${fmt(r.realFV)}</div></td>
+      <td>${fmt(r.totalInvested)}</td>
+      <td>${fmt(wealthGain)}</td>
+      <td><span class="beat-badge ${beats ? 'beat-yes' : 'beat-no'}">${beats ? '✓ Yes' : '✗ Barely'}</span></td>
+    </tr>`;
+            }).join('');
+
+            // Bar chart
+            const maxReal = Math.max(...results.map(r => r.realFV));
+            const barChart = document.getElementById('barChart');
+            barChart.innerHTML = results.map(r => `
+    <div class="bar-item">
+      <div class="bar-label">${r.label}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(r.realFV/maxReal)*100}%; background:${r.color}">
+          ${r.rate <= 4 ? fmtPlain(r.realFV) : ''}
+        </div>
+      </div>
+      <div class="bar-amount" style="color:${r.color}">${fmt(r.realFV)}</div>
+    </div>
+  `).join('');
+
+            // Explanation cards
+            const diff_3_7 = rbi.realFV - results.find(r => r.rate === 7).realFV;
+            const expCards = document.getElementById('explanationCards');
+            expCards.innerHTML = `
+    <div class="exp-card" style="--card-color:#10b981">
+      <div class="emoji">😊</div>
+      <div class="title">3–4% Inflation (Best Case)</div>
+      <div class="body">Your real wealth is <strong>${fmt(rbi.realFV)}</strong> in today's money. RBI is doing its job. Your investments comfortably beat inflation — you're building <em>real</em> wealth. This is the dream scenario!</div>
+    </div>
+    <div class="exp-card" style="--card-color:#f97316">
+      <div class="emoji">😐</div>
+      <div class="title">5% Inflation (Most Realistic)</div>
+      <div class="body">Real value drops to <strong>${fmt(likely.realFV)}</strong>. Still healthy — your investments beat inflation by a good margin at ${ret}% returns. Stay invested, don't panic.</div>
+    </div>
+    <div class="exp-card" style="--card-color:#ef4444">
+      <div class="emoji">😟</div>
+      <div class="title">6–7% Inflation (Warning Zone)</div>
+      <div class="body">High inflation erodes ${fmt(diff_3_7)} from your real wealth vs 3% scenario. This is why increasing your SIP and income matters — don't let inflation win!</div>
+    </div>
+    <div class="exp-card" style="--card-color:#a855f7">
+      <div class="emoji">🏠</div>
+      <div class="title">Life Goal Reality Check</div>
+      <div class="body">At RBI's 4% target, your <strong>${fmt(rbi.realFV)}</strong> real corpus can fund a house down payment, car, or post-grad studies. At 6% inflation, that same money buys significantly less. Plan accordingly.</div>
+    </div>
+  `;
+
+            // Advice
+            const advList = document.getElementById('adviceList');
+            advList.innerHTML = `
+    <li><span class="icon">📈</span><div><strong>Increase SIP with salary:</strong> You're already doing ${su}% step-up — great habit! Every hike should trigger a SIP hike.</div></li>
+    <li><span class="icon">🎓</span><div><strong>Invest in yourself first:</strong> Skills → higher salary → larger SIP → bigger corpus. Your human capital is your biggest asset right now.</div></li>
+    <li><span class="icon">⏰</span><div><strong>Never break your SIP:</strong> Even one paused year costs you compounding. Stay invested through market dips — that's when NAVs are on sale!</div></li>
+    <li><span class="icon">🌍</span><div><strong>Diversify across categories:</strong> Mix large-cap, mid-cap, and flexi-cap funds. Don't put all ₹ in one fund.</div></li>
+    <li><span class="icon">🧾</span><div><strong>ELSS for tax + growth:</strong> ₹1.5L/year in ELSS saves ₹46,800 tax (30% bracket) AND earns equity returns. Two birds, one stone.</div></li>
+    <li><span class="icon">📊</span><div><strong>Review annually, not daily:</strong> Check performance once a year. Daily NAV tracking leads to bad decisions. Trust the process.</div></li>
+  `;
+
+            // Initial AI message
+            const crore = rbi.nominalFV >= 1e7;
+            document.getElementById('initialMsg').innerHTML =
+                `Namaste! 🙏 I've analyzed your SIP plan. <strong>Good news</strong>: at ${ret}% returns for ${yrs} years, you're building real wealth!<br><br>
+    Your nominal corpus at ${yrs} years: <strong>${fmt(rbi.nominalFV)}</strong><br>
+    Real value (at RBI's 4% inflation): <strong>${fmt(rbi.realFV)}</strong><br><br>
+    ${crore ? '🎉 <strong>You\'re on track to become a crorepati!</strong>' : '💪 Keep growing your SIP to reach ₹1 Cr faster!'}<br><br>
+    Ask me anything — goals, strategies, how to reach ₹1 Cr faster — I'm here to help!`;
+
+            // Suggestions
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = [
+                'Will I become rich in ' + yrs + ' years?',
+                'How to reach ₹1 Crore faster?',
+                'Is ' + ret + '% return realistic?',
+                'What if I increase SIP by ₹1000?',
+                'Best funds for students?'
+            ].map(q => `<div class="suggestion-chip" onclick="askSuggestion('${q}')">${q}</div>`).join('');
+
+            // Motivation
+            const quotes = [
+                `🌱 "The best time to plant a tree was 20 years ago. The second best time is now." — Keep going, you started early!`,
+                `🚀 "Compounding is the 8th wonder of the world. Those who understand it, earn it." — Einstein (& you!)`,
+                `💪 "Financial freedom is available to those who learn about it and work for it." — Robert Kiyosaki`,
+                `⭐ "A SIP a day keeps financial worry away. Your future self will thank you today!"`,
+            ];
+            document.getElementById('motivationQuote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+            document.getElementById('results').classList.add('visible');
+            document.getElementById('results').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function askSuggestion(q) {
+            document.getElementById('chatInput').value = q;
+            sendChat();
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const messagesDiv = document.getElementById('chatMessages');
+            const sendBtn = document.getElementById('chatSendBtn');
+
+            // Add user message
+            messagesDiv.innerHTML += `<div class="msg msg-user">${msg}</div>`;
+            input.value = '';
+            sendBtn.disabled = true;
+
+            // Typing indicator
+            const typingId = 'typing-' + Date.now();
+            messagesDiv.innerHTML += `<div class="msg msg-ai" id="${typingId}"><div class="sender">FinWise AI</div><div class="typing"><span></span><span></span><span></span></div></div>`;
+
+            const chatBody = document.getElementById('chatBody');
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Build context
+            const {
+                sip,
+                ret,
+                yrs,
+                su,
+                results
+            } = calcData;
+            const rbiResult = results ? results.find(r => r.rate === 4) : null;
+
+            const systemPrompt = `You are FinWise AI, a friendly, expert Indian financial advisor for college students and young investors.
+
+Current user SIP plan:
+- Monthly SIP: ₹${sip}
+- Expected Return: ${ret}%
+- Duration: ${yrs} years
+- Annual Step-up: ${su}%
+${rbiResult ? `- Nominal Corpus: ${fmt(rbiResult.nominalFV)}
+- Real Value at 4% inflation: ${fmt(rbiResult.realFV)}
+- Total Invested: ${fmt(rbiResult.totalInvested)}` : ''}
+
+Rules:
+- Always be realistic. Never guarantee returns.
+- Use Indian financial context (SEBI, RBI, NSE, BSE, ELSS, PPF, NPS, etc.)
+- Explain in simple language a college student understands.
+- Use ₹ for currency. Format large numbers as Lakhs (L) and Crores (Cr).
+- Keep responses concise (3-5 sentences max for simple questions, slightly longer for complex ones).
+- Be encouraging but honest about market risks.
+- End with a one-line tip or emoji.`;
+
+  const userPrompt = `User question: "${msg}"`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }]
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.content?.[0]?.text || "I couldn't process that. Please try again!";
+
+    document.getElementById(typingId).innerHTML =
+      `<div class="sender">FinWise AI</div>${reply.replace(/\n/g, '<br>')}`;
+
+  } catch (err) {
+    document.getElementById(typingId).innerHTML =
+      `<div class="sender">FinWise AI</div>Oops! Something went wrong. Please check your connection and try again. 🙏`;
+  }
+
+  sendBtn.disabled = false;
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// Auto calculate on load with defaults
+calculate();
+    </script>
+</body>
+
+</html>
